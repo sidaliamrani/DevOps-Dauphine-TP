@@ -71,6 +71,7 @@ Vous êtes prêt.e pour le TP, pas besoin d'attendre que le cluster / postgres s
 
 ## 3. Conseils
 - **Pour répondre aux questions : éditer le fichier TP.md de votre repo détaillant votre démarche.** Même si vous êtes bloqués, cela permet de mettre en avant votre compréhension générale.
+- Faites des commits réguliers pour sauvegarder votre travail
 - Commentez vos fichiers et faites en sorte qu'ils soient faciles à lire
 - Bien lire les messages d'erreur, dans la grande majorité des cas ils sont assez explicites pour que vous trouviez la cause
 - Vous pouvez évidemment chercher de la documentation en ligne
