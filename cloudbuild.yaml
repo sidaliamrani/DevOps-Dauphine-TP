@@ -1,0 +1,18 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build Docker Image'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$single-mix-449209-n7/my-repository/my-custom-wordpress:${_IMAGE_TAG}'
+      - '.'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Docker Image'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$single-mix-449209-n7/my-repository/my-custom-wordpress:${_IMAGE_TAG}'
+images:
+  - 'us-central1-docker.pkg.dev/$single-mix-449209-n7/my-repository/my-custom-wordpress:${_IMAGE_TAG}'
+substitutions:
+    _IMAGE_TAG: '1.1'

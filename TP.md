@@ -50,6 +50,14 @@ Nous allons créer les ressources suivantes à l'aide de Terraform :
 5. Vérifier que notre utilisateur existe bien : https://console.cloud.google.com/sql/instances/main-instance/users (veiller à bien séléctionner le projet GCP sur lequel vous avez déployé vos ressources)
 6. Rendez-vous sur https://console.cloud.google.com/sql/instances/main-instance/databases. Quelles sont les base de données présentes sur votre instance `main-instance` ? Quels sont les types ?
 
+Les bases de données présentes sur l'instance main-instance sont :
+
+information_schema (Type : Système)
+mysql (Type : Système)
+performance_schema (Type : Système)
+sys (Type : Système)
+wordpress (Type : Utilisateur)
+
 ## Partie 2 : Docker
 
 Wordpress dispose d'une image Docker officielle disponible sur [DockerHub](https://hub.docker.com/_/wordpress)
@@ -58,22 +66,41 @@ Wordpress dispose d'une image Docker officielle disponible sur [DockerHub](https
 
 2. Lancer l'image docker et ouvrez un shell à l'intérieur de votre container:
    1. Quel est le répertoire courant du container (WORKDIR) ?
+   /var/www/html
    2. Quelles sont les différents fichiers html contenu dans WORKDIR ?
+utiliser la commande cat index.php 
 
 3. Supprimez le container puis relancez en un en spécifiant un port binding (une correspondance de port).
 
    1. Vous devez pouvoir communiquer avec le port par défaut de wordpress : **80** (choisissez un port entre 8000 et 9000 sur votre machine hôte => cloudshell)
 
    2. Avec la commande `curl`, faites une requêtes depuis votre machine hôte à votre container wordpress. Quelle est la réponse ? (il n'y a pas piège, essayez sur un port non utilisé pour constater la différence)
+   sid_ali_amrani@cloudshell:~/DevOps-Dauphine-TP (single-mix-449209-n7)$ curl http://localhost:8085
+curl: (7) Failed to connect to localhost port 8085 after 0 ms: Couldn't connect to server
 
    3. Afficher les logs de votre container après avoir fait quelques requêtes, que voyez vous ?
+   ✅ WordPress a bien été installé automatiquement.
+   ✅ Apache et PHP sont bien démarrés.
+   ✅ Les requêtes curl sont bien enregistrées dans les logs.
+   ✅ La réponse HTTP 302 indique une redirection (probablement vers l’installation de WordPress).
    4. Utilisez l'aperçu web pour afficher le résultat du navigateur qui se connecte à votre container wordpress
       1. Utiliser la fonction `Aperçu sur le web`
         ![web_preview](images/wordpress_preview.png)
       2. Modifier le port si celui choisi n'est pas `8000`
       3. Une fenètre s'ouvre, que voyez vous ?
 
+      ![Description de l'image](images/image.png)
+
+
 4. A partir de la documentation, remarquez les paramètres requis pour la configuration de la base de données.
+
+DB_NAME : Nom de la base de données
+DB_USER : Nom d'utilisateur de la base de données
+DB_PASSWORD : Mot de passe de la base de données
+DB_HOST : Hôte de la base de données (dans Docker, c'est généralement le nom du service MySQL/PostgreSQL)
+DB_CHARSET : Jeu de caractères 
+DB_COLLATE : Collation 
+
 
 5. Dans la partie 1 du TP (si pas déjà fait), nous allons créer cette base de donnée. Dans cette partie 2 nous allons créer une image docker qui utilise des valeurs spécifiques de paramètres pour la base de données.
    1. Créer un Dockerfile
@@ -82,8 +109,21 @@ Wordpress dispose d'une image Docker officielle disponible sur [DockerHub](https
         - `WORDPRESS_DB_PASSWORD=ilovedevops`
         - `WORDPRESS_DB_NAME=wordpress`
         - `WORDPRESS_DB_HOST=0.0.0.0`
+
+
+FROM wordpress:latest
+
+ENV WORDPRESS_DB_HOST=0.0.0.0
+ENV WORDPRESS_DB_USER=wordpress
+ENV WORDPRESS_DB_PASSWORD=ilovedevops
+ENV WORDPRESS_DB_NAME=wordpress
+
+
+
    3. Construire l'image docker.
    4. Lancer une instance de l'image, ouvrez un shell. Vérifier le résultat de la commande `echo $WORDPRESS_DB_PASSWORD`
+   root@5784338ee940:/var/www/html# echo $WORDPRESS_DB_PASSWORD
+ilovedevops
 
 6. Pipeline d'Intégration Continue (CI):
    1. Créer un dépôt de type `DOCKER` sur artifact registry (si pas déjà fait, sinon utiliser celui appelé `website-tools`)
